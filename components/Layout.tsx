@@ -111,7 +111,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="footer-bottom">
-          <p>© 2026 Terratrust. Built on Starknet. Made in Nigeria 🇳🇬</p>
+          <p>© 2026 Terratrust. Built on Starknet.</p>
         </div>
       </footer>
     </div>
