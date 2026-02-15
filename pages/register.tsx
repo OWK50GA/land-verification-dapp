@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Layout from '../components/Layout';
-import ProtectedRoute from '../components/ProtectedRoute';
 import toast from 'react-hot-toast';
 
 export default function Register() {
@@ -38,48 +37,46 @@ export default function Register() {
   };
 
   return (
-    <ProtectedRoute>
-      <Layout>
-        <div className="container">
-          <h1>📝 Register Your Land</h1>
-          <p className="subtitle">
-            Register your land ownership on the blockchain permanently.
-          </p>
+    <Layout>
+      <div className="container">
+        <h1>📝 Register Your Land</h1>
+        <p className="subtitle">
+          Register your land ownership on the blockchain permanently.
+        </p>
 
-          <div className="card">
-            <label>Land ID</label>
-            <input
-              type="text"
-              placeholder="e.g., 12345"
-              value={landId}
-              onChange={(e) => setLandId(e.target.value)}
-              className="input"
-            />
+        <div className="card">
+          <label>Land ID</label>
+          <input
+            type="text"
+            placeholder="e.g., 12345"
+            value={landId}
+            onChange={(e) => setLandId(e.target.value)}
+            className="input"
+          />
 
-            <label>Location Description</label>
-            <input
-              type="text"
-              placeholder="e.g., Lagos, Victoria Island, Plot 45"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="input"
-            />
+          <label>Location Description</label>
+          <input
+            type="text"
+            placeholder="e.g., Lagos, Victoria Island, Plot 45"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="input"
+          />
 
-            <label>Survey Document (PDF or Image)</label>
-            <input
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              onChange={handleFileChange}
-              className="input"
-            />
-            {file && <p className="file-name">📎 {file.name}</p>}
+          <label>Survey Document (PDF or Image)</label>
+          <input
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={handleFileChange}
+            className="input"
+          />
+          {file && <p className="file-name">📎 {file.name}</p>}
 
-            <button onClick={registerLand} disabled={loading} className="button">
-              {loading ? 'Registering...' : 'Register Land'}
-            </button>
-          </div>
+          <button onClick={registerLand} disabled={loading} className="button">
+            {loading ? 'Registering...' : 'Register Land'}
+          </button>
         </div>
-      </Layout>
-    </ProtectedRoute>
+      </div>
+    </Layout>
   );
 }
