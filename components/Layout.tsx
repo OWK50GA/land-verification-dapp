@@ -6,8 +6,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <nav className="navbar">
         <div className="nav-container">
           <Link href="/" className="logo">
-            <span className="logo-icon">🛡️</span>
-            <span className="logo-text">Terratrust</span>
+            <img src="/logo.png" alt="Terratrust Logo" className="logo-img" />
           </Link>
 
           <div className="nav-links">
