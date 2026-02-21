@@ -15,7 +15,6 @@ export default function Home() {
 
     setLoading(true);
     
-    // Simulated verification
     setTimeout(() => {
       setLandInfo({
         owner: '0x1234...5678',
@@ -30,24 +29,54 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="container">
-        <h1>🔍 Verify Land Ownership</h1>
-        <p className="subtitle">
-          Check land ownership before you buy. Protect yourself from fraud.
-        </p>
+      <div className="verify-page">
+        <div className="verify-container">
+          <div className="verify-card">
+            <div className="blockchain-badge">
+              🔒 Blockchain Secured
+            </div>
+            
+            <h1 className="verify-title">
+              Verify Land<br />Ownership
+            </h1>
+            
+            <p className="verify-subtitle">
+              Verify property authenticity instantly using<br />
+              decentralized ledger technology.
+            </p>
 
-        <div className="card">
-          <label>Enter Land ID</label>
-          <input
-            type="text"
-            placeholder="e.g., 12345"
-            value={landId}
-            onChange={(e) => setLandId(e.target.value)}
-            className="input"
-          />
-          <button onClick={verifyLand} disabled={loading} className="button">
-            {loading ? 'Verifying...' : 'Verify Land'}
-          </button>
+            <div className="input-group">
+              <label className="input-label">ENTER LAND ID</label>
+              <input
+                type="text"
+                placeholder="eg. TX-9920-X"
+                value={landId}
+                onChange={(e) => setLandId(e.target.value)}
+                className="verify-input"
+              />
+            </div>
+
+            <button 
+              onClick={verifyLand} 
+              disabled={loading} 
+              className="verify-button"
+            >
+              <svg 
+                className="verify-icon" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+                />
+              </svg>
+              {loading ? 'Verifying...' : 'Verify Property'}
+            </button>
+          </div>
         </div>
 
         {landInfo && (
@@ -65,14 +94,6 @@ export default function Home() {
             <div className="info-row">
               <strong>Registered:</strong> {landInfo.registered}
             </div>
-            <a 
-              href={`https://gateway.pinata.cloud/ipfs/${landInfo.documentHash}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link"
-            >
-              📄 View Survey Document
-            </a>
           </div>
         )}
       </div>
