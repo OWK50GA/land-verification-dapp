@@ -5,6 +5,13 @@ import { CONTRACT_ADDRESS, LAND_REGISTRY_ABI } from "@/lib/contract";
 import { stringToFelt252 } from "@/lib/utils";
 import type { TxStatus } from "@/types";
 
+type FunctionName =
+  | "register_land"
+  | "transfer_land"
+  | "update_document"
+  | "flag_dispute"
+  | "resolve_dispute";
+
 export function useWrite() {
   const [status, setStatus] = useState<TxStatus>("idle");
   const [txHash, setTxHash] = useState<string | null>(null);
@@ -15,7 +22,7 @@ export function useWrite() {
 
   const reset = () => { setStatus("idle"); setTxHash(null); setErrMsg(null); };
 
-  async function send(name: string, args: any[]) {
+  async function send(name: FunctionName, args: unknown[]) {
     if (!contract) throw new Error("Contract not ready");
     setStatus("pending"); setErrMsg(null);
     try {
@@ -24,17 +31,22 @@ export function useWrite() {
       setTxHash(res.transaction_hash);
       setStatus("success");
       return res;
-    } catch (e: any) {
-      setErrMsg(e?.message ?? "Failed");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Failed";
+      setErrMsg(msg);
       setStatus("error");
       throw e;
     }
   }
 
   const registerLand = (p: {
-    parcel_number: string; gps_coordinate: string;
-    area_square_meters: bigint; legal_doc_hash: string;
-    current_valuation: bigint; encumbrance: string; purpose: string;
+    parcel_number: string;
+    gps_coordinate: string;
+    area_square_meters: bigint;
+    legal_doc_hash: string;
+    current_valuation: bigint;
+    encumbrance: string;
+    purpose: string;
   }) =>
     send("register_land", [
       stringToFelt252(p.parcel_number),
