@@ -5,13 +5,6 @@ import { CONTRACT_ADDRESS, LAND_REGISTRY_ABI } from "@/lib/contract";
 import { stringToFelt252 } from "@/lib/utils";
 import type { TxStatus } from "@/types";
 
-type FunctionName =
-  | "register_land"
-  | "transfer_land"
-  | "update_document"
-  | "flag_dispute"
-  | "resolve_dispute";
-
 export function useWrite() {
   const [status, setStatus] = useState<TxStatus>("idle");
   const [txHash, setTxHash] = useState<string | null>(null);
@@ -22,12 +15,10 @@ export function useWrite() {
 
   const reset = () => { setStatus("idle"); setTxHash(null); setErrMsg(null); };
 
-  async function send(name: FunctionName, args: unknown[]) {
-    if (!contract) throw new Error("Contract not ready");
+  async function sendCall(call: object) {
     setStatus("pending"); setErrMsg(null);
     try {
-      const call = contract.populate(name, args);
-      const res = await sendAsync([call]);
+      const res = await sendAsync([call as any]);
       setTxHash(res.transaction_hash);
       setStatus("success");
       return res;
@@ -39,7 +30,7 @@ export function useWrite() {
     }
   }
 
-  const registerLand = (p: {
+  const registerLand = async (p: {
     parcel_number: string;
     gps_coordinate: string;
     area_square_meters: bigint;
@@ -47,8 +38,9 @@ export function useWrite() {
     current_valuation: bigint;
     encumbrance: string;
     purpose: string;
-  }) =>
-    send("register_land", [
+  }) => {
+    if (!contract) throw new Error("Contract not ready");
+    const call = contract.populate("register_land", [
       stringToFelt252(p.parcel_number),
       stringToFelt252(p.gps_coordinate),
       p.area_square_meters,
@@ -57,18 +49,32 @@ export function useWrite() {
       { [p.encumbrance]: {} },
       { [p.purpose]: {} },
     ]);
+    return sendCall(call);
+  };
 
-  const transferLand = (recipient: string, land_id: bigint) =>
-    send("transfer_land", [recipient, land_id]);
+  const transferLand = async (recipient: string, land_id: bigint) => {
+    if (!contract) throw new Error("Contract not ready");
+    const call = contract.populate("transfer_land", [recipient, land_id]);
+    return sendCall(call);
+  };
 
-  const updateDocument = (land_id: bigint, new_hash: string) =>
-    send("update_document", [new_hash, land_id]);
+  const updateDocument = async (land_id: bigint, new_hash: string) => {
+    if (!contract) throw new Error("Contract not ready");
+    const call = contract.populate("update_document", [new_hash, land_id]);
+    return sendCall(call);
+  };
 
-  const flagDispute = (land_id: bigint) =>
-    send("flag_dispute", [land_id]);
+  const flagDispute = async (land_id: bigint) => {
+    if (!contract) throw new Error("Contract not ready");
+    const call = contract.populate("flag_dispute", [land_id]);
+    return sendCall(call);
+  };
 
-  const resolveDispute = (land_id: bigint) =>
-    send("resolve_dispute", [land_id]);
+  const resolveDispute = async (land_id: bigint) => {
+    if (!contract) throw new Error("Contract not ready");
+    const call = contract.populate("resolve_dispute", [land_id]);
+    return sendCall(call);
+  };
 
   return { registerLand, transferLand, updateDocument, flagDispute, resolveDispute, status, txHash, errMsg, reset };
 }
