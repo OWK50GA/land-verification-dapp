@@ -13,6 +13,7 @@ export function stringToFelt252(str: string): string {
   return shortString.encodeShortString(str);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parseEncumbrance(raw: any): Encumbrance {
   if (typeof raw === "object" && raw !== null) {
     const key = Object.keys(raw)[0];
@@ -21,6 +22,7 @@ export function parseEncumbrance(raw: any): Encumbrance {
   return "NONE";
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parsePurpose(raw: any): LandPurpose {
   if (typeof raw === "object" && raw !== null) {
     const key = Object.keys(raw)[0];
@@ -29,6 +31,7 @@ export function parsePurpose(raw: any): LandPurpose {
   return "NONE";
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parseLand(raw: any): Land {
   return {
     land_id: BigInt(raw.land_id ?? 0),
@@ -41,6 +44,7 @@ export function parseLand(raw: any): Land {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parseHistory(raw: any[]): TransferHistoryEntry[] {
   return raw.map((e) =>
     Array.isArray(e)
