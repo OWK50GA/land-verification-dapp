@@ -10,15 +10,22 @@ export function useWrite() {
   const [txHash, setTxHash] = useState<string | null>(null);
   const [errMsg, setErrMsg] = useState<string | null>(null);
 
-  const { contract } = useContract({ abi: LAND_REGISTRY_ABI, address: CONTRACT_ADDRESS });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { contract } = useContract({ abi: LAND_REGISTRY_ABI as any, address: CONTRACT_ADDRESS });
   const { sendAsync } = useSendTransaction({});
 
-  const reset = () => { setStatus("idle"); setTxHash(null); setErrMsg(null); };
+  const reset = () => {
+    setStatus("idle");
+    setTxHash(null);
+    setErrMsg(null);
+  };
 
-  async function sendCall(call: object) {
-    setStatus("pending"); setErrMsg(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function sendCall(call: any) {
+    setStatus("pending");
+    setErrMsg(null);
     try {
-      const res = await sendAsync([call as any]);
+      const res = await sendAsync([call]);
       setTxHash(res.transaction_hash);
       setStatus("success");
       return res;
@@ -40,7 +47,9 @@ export function useWrite() {
     purpose: string;
   }) => {
     if (!contract) throw new Error("Contract not ready");
-    const call = contract.populate("register_land", [
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const c = contract as any;
+    const call = c.populate("register_land", [
       stringToFelt252(p.parcel_number),
       stringToFelt252(p.gps_coordinate),
       p.area_square_meters,
@@ -54,27 +63,45 @@ export function useWrite() {
 
   const transferLand = async (recipient: string, land_id: bigint) => {
     if (!contract) throw new Error("Contract not ready");
-    const call = contract.populate("transfer_land", [recipient, land_id]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const c = contract as any;
+    const call = c.populate("transfer_land", [recipient, land_id]);
     return sendCall(call);
   };
 
   const updateDocument = async (land_id: bigint, new_hash: string) => {
     if (!contract) throw new Error("Contract not ready");
-    const call = contract.populate("update_document", [new_hash, land_id]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const c = contract as any;
+    const call = c.populate("update_document", [new_hash, land_id]);
     return sendCall(call);
   };
 
   const flagDispute = async (land_id: bigint) => {
     if (!contract) throw new Error("Contract not ready");
-    const call = contract.populate("flag_dispute", [land_id]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const c = contract as any;
+    const call = c.populate("flag_dispute", [land_id]);
     return sendCall(call);
   };
 
   const resolveDispute = async (land_id: bigint) => {
     if (!contract) throw new Error("Contract not ready");
-    const call = contract.populate("resolve_dispute", [land_id]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const c = contract as any;
+    const call = c.populate("resolve_dispute", [land_id]);
     return sendCall(call);
   };
 
-  return { registerLand, transferLand, updateDocument, flagDispute, resolveDispute, status, txHash, errMsg, reset };
+  return {
+    registerLand,
+    transferLand,
+    updateDocument,
+    flagDispute,
+    resolveDispute,
+    status,
+    txHash,
+    errMsg,
+    reset,
+  };
 }
