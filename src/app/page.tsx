@@ -1,177 +1,170 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
-import { shortAddr } from "@/lib/utils";
-import clsx from "clsx";
+import { useTotalLands } from "@/hooks/useRead";
 
-const LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/verify", label: "Verify" },
-  { href: "/register", label: "Register" },
-  { href: "/transfer", label: "Transfer" },
-  { href: "/my-lands", label: "My Lands" },
-  { href: "/admin", label: "Admin" },
-];
-
-export function Navbar() {
-  const path = usePathname();
-  const [open, setOpen] = useState(false);
-  const [wOpen, setWOpen] = useState(false);
-  const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
-  const { disconnect } = useDisconnect();
+export default function Home() {
+  const { total, isLoading } = useTotalLands();
 
   return (
-    <nav className="sticky top-0 z-50 bg-zinc-950/95 border-b border-zinc-800 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto px-4 flex h-16 items-center justify-between">
+    <div className="min-h-screen">
 
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg overflow-hidden bg-amber-700 flex items-center justify-center shrink-0">
-            <img
-              src="/logo.png"
-              alt="Terratrust"
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-            <span className="text-white font-bold text-sm absolute">T</span>
+      {/* Hero */}
+      <section className="relative border-b border-zinc-800 bg-zinc-950">
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-950/20 via-zinc-950 to-zinc-950 pointer-events-none" />
+        <div className="relative max-w-6xl mx-auto px-4 py-20 md:py-28">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-900/60 bg-amber-950/40 text-amber-400 text-xs font-medium mb-8">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Live on Starknet Sepolia
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-zinc-50 leading-tight tracking-tight mb-6">
+              Verify land ownership
+              <br />
+              <span className="text-amber-500">before you pay.</span>
+            </h1>
+
+            <p className="text-zinc-400 text-lg leading-relaxed mb-10 max-w-xl">
+              Terratrust is a decentralized land registry built on Starknet
+              that prevents fraud, double-selling, and document forgery by
+              recording immutable ownership history on-chain.
+            </p>
+
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/register"
+                className="btn-primary px-6 py-3 text-base font-semibold"
+              >
+                Register Land
+              </Link>
+              <Link
+                href="/verify"
+                className="btn-secondary px-6 py-3 text-base font-semibold"
+              >
+                Verify Ownership
+              </Link>
+            </div>
+
+            {/* Stats */}
+            <div className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-zinc-800/60">
+              <div>
+                <p className="text-2xl font-bold text-zinc-100">
+                  {isLoading ? "…" : String(total)}
+                </p>
+                <p className="text-xs text-zinc-500 uppercase tracking-wider mt-1">
+                  Parcels Registered
+                </p>
+              </div>
+              <div className="w-px bg-zinc-800" />
+              <div>
+                <p className="text-2xl font-bold text-zinc-100">Starknet</p>
+                <p className="text-xs text-zinc-500 uppercase tracking-wider mt-1">
+                  Blockchain
+                </p>
+              </div>
+              <div className="w-px bg-zinc-800" />
+              <div>
+                <p className="text-2xl font-bold text-zinc-100">IPFS</p>
+                <p className="text-xs text-zinc-500 uppercase tracking-wider mt-1">
+                  Document Storage
+                </p>
+              </div>
+            </div>
           </div>
-          <span className="font-bold text-zinc-100 text-base tracking-tight hidden sm:block">
-            Terratrust
-          </span>
-        </Link>
+        </div>
+      </section>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-0.5">
-          {LINKS.map((l) => (
+      {/* Trust indicators */}
+      <section className="border-b border-zinc-800 bg-zinc-900/40">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center gap-3 p-4 rounded-xl border border-zinc-800 bg-zinc-900">
+              <div className="w-9 h-9 rounded-lg bg-amber-900/40 border border-amber-800/40 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-zinc-100">Powered by Starknet</p>
+                <p className="text-xs text-zinc-500 mt-0.5">ZK-proof security and low fees</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 rounded-xl border border-zinc-800 bg-zinc-900">
+              <div className="w-9 h-9 rounded-lg bg-blue-900/40 border border-blue-800/40 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-zinc-100">IPFS-secured Documents</p>
+                <p className="text-xs text-zinc-500 mt-0.5">Legal deeds stored permanently</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 rounded-xl border border-zinc-800 bg-zinc-900">
+              <div className="w-9 h-9 rounded-lg bg-emerald-900/40 border border-emerald-800/40 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-zinc-100">Immutable Ownership History</p>
+                <p className="text-xs text-zinc-500 mt-0.5">Every transfer recorded forever</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-bold text-zinc-100 mb-2">Everything you need</h2>
+          <p className="text-zinc-500 text-sm">Full land lifecycle management on-chain</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            {
+              href: "/register",
+              icon: "⊞",
+              title: "Register Land",
+              desc: "Record a parcel on-chain. Mints an NFT to your wallet with your legal doc stored on IPFS.",
+            },
+            {
+              href: "/transfer",
+              icon: "→",
+              title: "Transfer",
+              desc: "Transfer a parcel NFT to any Starknet address. Full ownership history recorded.",
+            },
+            {
+              href: "/verify",
+              icon: "◎",
+              title: "Verify",
+              desc: "Look up any land by ID. See owner history, documents, area, valuation and status.",
+            },
+            {
+              href: "/my-lands",
+              icon: "☰",
+              title: "My Lands",
+              desc: "View all parcels in your wallet. Update documents or initiate transfers.",
+            },
+          ].map((f) => (
             <Link
-              key={l.href}
-              href={l.href}
-              className={clsx(
-                "px-3 py-1.5 rounded-md text-sm transition-colors",
-                path === l.href
-                  ? "bg-amber-900/50 text-amber-300 font-medium"
-                  : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800"
-              )}
+              key={f.href}
+              href={f.href}
+              className="card p-5 hover:border-zinc-700 transition-colors group"
             >
-              {l.label}
+              <div className="text-xl text-amber-600 mb-3 group-hover:text-amber-500 transition-colors">
+                {f.icon}
+              </div>
+              <h3 className="font-semibold text-zinc-100 mb-2">{f.title}</h3>
+              <p className="text-sm text-zinc-500 leading-relaxed">{f.desc}</p>
             </Link>
           ))}
         </div>
+      </section>
 
-        {/* Wallet + mobile toggle */}
-        <div className="flex items-center gap-2">
-          {isConnected && address ? (
-            <div className="relative">
-              <button
-                onClick={() => setWOpen(!wOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-700 bg-zinc-900 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                <span className="font-mono text-xs">{shortAddr(address)}</span>
-              </button>
-              {wOpen && (
-                <div className="absolute right-0 mt-2 w-52 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl py-1 z-50">
-                  <p className="px-3 py-2 text-xs text-zinc-500 border-b border-zinc-800 font-mono truncate">
-                    {address}
-                  </p>
-                  <button
-                    onClick={() => {
-                      disconnect();
-                      setWOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2.5 text-sm text-red-400 hover:bg-zinc-800 transition-colors"
-                  >
-                    Disconnect
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="relative">
-              <button
-                onClick={() => setWOpen(!wOpen)}
-                className="px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-semibold transition-colors"
-              >
-                Connect Wallet
-              </button>
-              {wOpen && (
-                <div className="absolute right-0 mt-2 w-52 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
-                  <p className="px-3 pb-2 text-xs text-zinc-500 border-b border-zinc-800 mb-1 font-medium uppercase tracking-wider">
-                    Select Wallet
-                  </p>
-                  {connectors.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => {
-                        connect({ connector: c });
-                        setWOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
-                    >
-                      {c.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden p-2 text-zinc-400 hover:text-zinc-200"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {open ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {open && (
-        <div className="md:hidden border-t border-zinc-800 px-4 py-3 space-y-1 bg-zinc-950">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              onClick={() => setOpen(false)}
-              className={clsx(
-                "block px-3 py-2.5 rounded-md text-sm transition-colors",
-                path === l.href
-                  ? "bg-amber-900/50 text-amber-300 font-medium"
-                  : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800"
-              )}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
-      )}
-    </nav>
+    </div>
   );
 }
