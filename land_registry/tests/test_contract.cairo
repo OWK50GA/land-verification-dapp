@@ -62,8 +62,8 @@ fn test_register_land() {
     let area_square_meters: u256 = 1000;
     let legal_doc_hash: ByteArray = "QmHash123";
     let current_valuation: u256 = 500000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::RESIDENTIAL;
+    let encumberance = 0;
+    let purpose = 1;
 
     dispatcher.register_land(
         parcel_number,
@@ -82,8 +82,8 @@ fn test_register_land() {
     assert(land.gps_coordinate == gps_coordinate, 'Invalid gps_coordinate');
     assert(land.area_square_meters == area_square_meters, 'Invalid area');
     assert(land.current_valuation == current_valuation, 'Invalid valuation');
-    assert(land.purpose == purpose, 'Invalid purpose');
-    assert(land.encumberance == encumberance, 'Invalid encumberance');
+    assert(land.purpose == LandPurposeResitrictions::RESIDENTIAL, 'Invalid purpose');
+    assert(land.encumberance == Encumberance::NONE, 'Invalid encumberance');
 
     // Verify token URI
     let token_uri = dispatcher.token_uri(1);
@@ -117,8 +117,8 @@ fn test_register_lands_same_parcel_number() {
     let area_square_meters: u256 = 1000;
     let legal_doc_hash: ByteArray = "QmHash123";
     let current_valuation: u256 = 500000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::RESIDENTIAL;
+    let encumberance = 0;
+    let purpose = 1;
 
     dispatcher.register_land(
         parcel_number,
@@ -138,7 +138,8 @@ fn test_register_lands_same_parcel_number() {
         "QmHash456",
         750000,
         encumberance,
-        LandPurposeResitrictions::COMMERCIAL
+        // 2
+        2
     );
 
     stop_cheat_caller_address(contract_address);
@@ -158,8 +159,8 @@ fn test_register_land_with_encumberance() {
     let area_square_meters: u256 = 1500;
     let legal_doc_hash: ByteArray = "QmHash789";
     let current_valuation: u256 = 600000;
-    let encumberance = Encumberance::DISPUTE; // Not NONE
-    let purpose = LandPurposeResitrictions::COMMERCIAL;
+    let encumberance = 1; // Not NONE
+    let purpose = 2;
 
     dispatcher.register_land(
         parcel_number,
@@ -187,8 +188,8 @@ fn test_transfer_land() {
     let area_square_meters: u256 = 2000;
     let legal_doc_hash: ByteArray = "QmHash111";
     let current_valuation: u256 = 800000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::AGRICULTURAL;
+    let encumberance = 0;
+    let purpose = 3;
 
     dispatcher.register_land(
         parcel_number,
@@ -244,8 +245,8 @@ fn test_transfer_land_to_self() {
     let area_square_meters: u256 = 1500;
     let legal_doc_hash: ByteArray = "QmHash222";
     let current_valuation: u256 = 700000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::RESIDENTIAL;
+    let encumberance = 0;
+    let purpose = 1;
 
     dispatcher.register_land(
         parcel_number,
@@ -277,8 +278,8 @@ fn test_transfer_land_not_owner() {
     let area_square_meters: u256 = 1800;
     let legal_doc_hash: ByteArray = "QmHash333";
     let current_valuation: u256 = 900000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::COMMERCIAL;
+    let encumberance = 0;
+    let purpose = 2;
 
     dispatcher.register_land(
         parcel_number,
@@ -315,8 +316,8 @@ fn test_transfer_land_with_encumberance() {
     let area_square_meters: u256 = 2500;
     let legal_doc_hash: ByteArray = "QmHash444";
     let current_valuation: u256 = 1000000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::AGRICULTURAL;
+    let encumberance = 0;
+    let purpose = 3;
 
     dispatcher.register_land(
         parcel_number,
@@ -335,8 +336,8 @@ fn test_transfer_land_with_encumberance() {
         3000,
         "QmHash555",
         1200000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::COMMERCIAL
+        0,
+        2
     );
 
     stop_cheat_caller_address(contract_address);
@@ -375,8 +376,8 @@ fn test_update_document() {
     let area_square_meters: u256 = 1200;
     let legal_doc_hash: ByteArray = "QmHash666";
     let current_valuation: u256 = 550000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::RESIDENTIAL;
+    let encumberance = 0;
+    let purpose = 1;
 
     dispatcher.register_land(
         parcel_number,
@@ -418,8 +419,8 @@ fn test_update_document_not_owner() {
     let area_square_meters: u256 = 1400;
     let legal_doc_hash: ByteArray = "QmHash777";
     let current_valuation: u256 = 650000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::COMMERCIAL;
+    let encumberance = 0;
+    let purpose = 2;
 
     dispatcher.register_land(
         parcel_number,
@@ -457,8 +458,8 @@ fn test_update_document_with_encumberance() {
     let area_square_meters: u256 = 1600;
     let legal_doc_hash: ByteArray = "QmHash888";
     let current_valuation: u256 = 750000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::AGRICULTURAL;
+    let encumberance = 0;
+    let purpose = 3;
 
     dispatcher.register_land(
         parcel_number,
@@ -501,8 +502,8 @@ fn test_get_land() {
     let area_square_meters: u256 = 1800;
     let legal_doc_hash: ByteArray = "QmHash999";
     let current_valuation: u256 = 850000;
-    let encumberance = Encumberance::NONE;
-    let purpose = LandPurposeResitrictions::RESIDENTIAL;
+    let encumberance = 0;
+    let purpose = 1;
 
     dispatcher.register_land(
         parcel_number,
@@ -521,8 +522,8 @@ fn test_get_land() {
     assert(land.gps_coordinate == gps_coordinate, 'Invalid gps_coordinate');
     assert(land.area_square_meters == area_square_meters, 'Invalid area');
     assert(land.current_valuation == current_valuation, 'Invalid valuation');
-    assert(land.purpose == purpose, 'Invalid purpose');
-    assert(land.encumberance == encumberance, 'Invalid encumberance');
+    assert(land.purpose == LandPurposeResitrictions::RESIDENTIAL, 'Invalid purpose');
+    assert(land.encumberance == Encumberance::NONE, 'Invalid encumberance');
 
     // Test getting non-existent land (should return default/zero values)
     let non_existent_land = dispatcher.get_land(999);
@@ -552,8 +553,8 @@ fn test_get_user_lands() {
         1000,
         "QmHashU1_1",
         500000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::RESIDENTIAL
+        0,
+        1
     );
     dispatcher.register_land(
         'PARCEL_U1_2',
@@ -561,8 +562,8 @@ fn test_get_user_lands() {
         1500,
         "QmHashU1_2",
         750000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::COMMERCIAL
+        0,
+        2
     );
     stop_cheat_caller_address(contract_address);
 
@@ -574,8 +575,8 @@ fn test_get_user_lands() {
         2000,
         "QmHashU2_1",
         800000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::AGRICULTURAL
+        0,
+        3
     );
     dispatcher.register_land(
         'PARCEL_U2_2',
@@ -583,8 +584,8 @@ fn test_get_user_lands() {
         2500,
         "QmHashU2_2",
         900000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::RESIDENTIAL
+        0,
+        1
     );
     dispatcher.register_land(
         'PARCEL_U2_3',
@@ -592,8 +593,8 @@ fn test_get_user_lands() {
         3000,
         "QmHashU2_3",
         1000000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::COMMERCIAL
+        0,
+        2
     );
     stop_cheat_caller_address(contract_address);
 
@@ -605,8 +606,8 @@ fn test_get_user_lands() {
         1200,
         "QmHashU3_1",
         600000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::RESIDENTIAL
+        0,
+        1
     );
     stop_cheat_caller_address(contract_address);
 
@@ -679,8 +680,8 @@ fn test_get_transfer_history() {
         2000,
         "QmHashHist",
         1000000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::RESIDENTIAL
+        0,
+        1
     );
     stop_cheat_caller_address(contract_address);
 
@@ -780,8 +781,8 @@ fn test_get_total_lands() {
         1000,
         "QmHashT1",
         500000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::RESIDENTIAL
+        0,
+        1
     );
     stop_cheat_caller_address(contract_address);
 
@@ -796,8 +797,8 @@ fn test_get_total_lands() {
         1500,
         "QmHashT2",
         600000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::COMMERCIAL
+        0,
+        2
     );
     dispatcher.register_land(
         'PARCEL_T3',
@@ -805,8 +806,8 @@ fn test_get_total_lands() {
         2000,
         "QmHashT3",
         700000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::AGRICULTURAL
+        0,
+        3
     );
     stop_cheat_caller_address(contract_address);
 
@@ -821,8 +822,8 @@ fn test_get_total_lands() {
         2500,
         "QmHashT4",
         800000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::RESIDENTIAL
+        0,
+        1
     );
     dispatcher.register_land(
         'PARCEL_T5',
@@ -830,8 +831,8 @@ fn test_get_total_lands() {
         3000,
         "QmHashT5",
         900000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::COMMERCIAL
+        0,
+        2
     );
     dispatcher.register_land(
         'PARCEL_T6',
@@ -839,8 +840,8 @@ fn test_get_total_lands() {
         3500,
         "QmHashT6",
         1000000,
-        Encumberance::NONE,
-        LandPurposeResitrictions::AGRICULTURAL
+        0,
+        3
     );
     stop_cheat_caller_address(contract_address);
 

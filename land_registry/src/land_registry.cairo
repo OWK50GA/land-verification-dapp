@@ -5,7 +5,8 @@ pub mod LandRegistry {
     use openzeppelin::token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::security::ReentrancyGuardComponent;
-    use starknet::{ContractAddress, get_caller_address, get_block_timestamp};
+    use openzeppelin::upgrades::UpgradeableComponent;
+    use starknet::{ContractAddress, get_caller_address, get_block_timestamp, ClassHash};
     use starknet::storage::{
         Map, MutableVecTrait, StoragePathEntry, StoragePointerReadAccess, StoragePointerWriteAccess,
         Vec, VecTrait,
@@ -31,6 +32,8 @@ pub mod LandRegistry {
         pub src5: SRC5Component::Storage,
         #[substorage(v0)]
         pub reentrancyguard: ReentrancyGuardComponent::Storage,
+        #[substorage(v0)]
+        pub upgradeable: UpgradeableComponent::Storage
     }
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -38,6 +41,7 @@ pub mod LandRegistry {
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
     component!(path: ReentrancyGuardComponent, storage: reentrancyguard, event: ReentrancyGuardEvent);
+    component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -52,10 +56,13 @@ pub mod LandRegistry {
         SRC5Event: SRC5Component::Event,
         #[flat]
         ReentrancyGuardEvent: ReentrancyGuardComponent::Event,
+        #[flat]
+        UpgradeableEvent: UpgradeableComponent::Event,
         LandRegistered: LandRegistered,
         LandTransferred: LandTransferred,
         DocumentUpdated: DocumentUpdated,
         Flagged: Flagged,
+        LandCleared: LandCleared,
         DisputeResolved: DisputeResolved
     }
 
@@ -84,6 +91,11 @@ pub mod LandRegistry {
     }
 
     #[derive(Drop, starknet::Event)]
+    pub struct LandCleared {
+        pub land_id: u256,
+    }
+
+    #[derive(Drop, starknet::Event)]
     pub struct DisputeResolved {
         pub land_id: u256,
     }
@@ -101,6 +113,9 @@ pub mod LandRegistry {
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
 
     impl ReentrancyGuardImpl = ReentrancyGuardComponent::InternalImpl<ContractState>;
+
+    // #[abi(embed_v0)]
+    impl UpgradeableImpl = UpgradeableComponent::InternalImpl<ContractState>;
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress, name: ByteArray, symbol: ByteArray, base_uri: ByteArray) {
@@ -122,10 +137,27 @@ pub mod LandRegistry {
             area_square_meters: u256,
             legal_doc_hash: ByteArray,
             current_valuation: u256,
-            encumberance: Encumberance,
-            purpose: LandPurposeResitrictions,
+            encumberance: u8,
+            purpose: u8,
         ) {
             let existing_land_id = self.parcel_numbers_to_land.entry(parcel_number).read();
+
+            let encumberance = match encumberance {
+                0 => Encumberance::NONE,
+                1 => Encumberance::LIENS,
+                2 => Encumberance::MORTGAGE,
+                3 => Encumberance::DISPUTE,
+                _ => Encumberance::NONE
+            };
+
+            let purpose = match purpose {
+                0 => LandPurposeResitrictions::NONE,
+                1 => LandPurposeResitrictions::RESIDENTIAL,
+                2 => LandPurposeResitrictions::COMMERCIAL,
+                3 => LandPurposeResitrictions::AGRICULTURAL,
+                _ => LandPurposeResitrictions::NONE,
+            };
+
             assert(existing_land_id == 0, 'Land already exists');
             assert(encumberance == Encumberance::NONE, 'Bad land state');
             let current_owner = get_caller_address();
@@ -212,7 +244,15 @@ pub mod LandRegistry {
         }
 
         fn resolve_dispute(ref self: ContractState, land_id: u256) {
+            let mut land = self.token_ids_to_land.entry(land_id).read();
+            land.encumberance = Encumberance::NONE;
+            self.token_ids_to_land.entry(land_id).write(land);
 
+            self.emit(
+                LandCleared {
+                    land_id
+                }
+            );
         }
 
         // Use the pausable component for pause and unpause
@@ -264,6 +304,10 @@ pub mod LandRegistry {
         fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
             assert(self.erc721.exists(token_id), 'Token id does not exist');
             self.token_uris.entry(token_id).read()
+        }
+
+        fn upgrade(ref self: ContractState, new_class_hash: ClassHash) {
+            self.upgradeable.upgrade(new_class_hash);
         }
     }
 }
