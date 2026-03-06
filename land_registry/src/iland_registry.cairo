@@ -1,5 +1,5 @@
-use starknet::ContractAddress;
-use crate::types::{Encumberance, Land, LandPurposeResitrictions};
+use starknet::{ClassHash, ContractAddress};
+use crate::types::{Land};
 
 #[starknet::interface]
 pub trait ILandRegistry<TContractState> {
@@ -10,8 +10,8 @@ pub trait ILandRegistry<TContractState> {
         area_square_meters: u256,
         legal_doc_hash: ByteArray,
         current_valuation: u256,
-        encumberance: Encumberance,
-        purpose: LandPurposeResitrictions,
+        encumberance: u8,
+        purpose: u8,
     );
     fn transfer_land(
         ref self: TContractState, recipient: ContractAddress, land_id: u256
@@ -29,4 +29,5 @@ pub trait ILandRegistry<TContractState> {
     fn get_user_lands(self: @TContractState, user: ContractAddress) -> Span<u256>;
     fn get_total_lands(self: @TContractState) -> u256;
     fn token_uri(self: @TContractState, token_id: u256) -> ByteArray;
+    fn upgrade(ref self: TContractState, new_class_hash: ClassHash);
 }
