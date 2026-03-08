@@ -1,35 +1,21 @@
 "use client";
 import React from "react";
-import { sepolia } from "@starknet-react/chains";
+import { mainnet, sepolia } from "@starknet-react/chains";
 import {
   StarknetConfig,
+  publicProvider,
   argent,
   braavos,
-  useInjectedConnectors,
-  jsonRpcProvider,
-  ready,
 } from "@starknet-react/core";
 
-function rpc() {
-  return {
-    nodeUrl:
-      process.env.NEXT_PUBLIC_RPC_URL ||
-      "https://rpc.starknet-testnet.lava.build/rpc/v0_9",
-  };
-}
-
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
-  const { connectors } = useInjectedConnectors({
-    recommended: [ready(), braavos()],
-    includeRecommended: "always",
-    order: "random",
-  });
+  const connectors = [argent(), braavos()];
+
   return (
     <StarknetConfig
-      chains={[sepolia]}
-      provider={jsonRpcProvider({ rpc })}
+      chains={[sepolia, mainnet]}
+      provider={publicProvider()}
       connectors={connectors}
-      autoConnect={true}
     >
       {children}
     </StarknetConfig>
