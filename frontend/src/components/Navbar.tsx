@@ -1,176 +1,91 @@
 "use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
-import { shortAddr } from "@/lib/utils";
-import clsx from "clsx";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { StarknetProvider } from "@/lib/providers";
+import { Navbar } from "@/components/Navbar";
 
-const LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/verify", label: "Verify" },
-  { href: "/register", label: "Register" },
-  { href: "/transfer", label: "Transfer" },
-  { href: "/my-lands", label: "My Lands" },
-  { href: "/admin", label: "Admin" },
-];
+const inter = Inter({ subsets: ["latin"] });
 
-export function Navbar() {
-  const path = usePathname();
-  const [open, setOpen] = useState(false);
-  const [wOpen, setWOpen] = useState(false);
-  const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
-  const { disconnect } = useDisconnect();
-
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <nav className="sticky top-0 z-50 bg-zinc-950/95 border-b border-zinc-800 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto px-4 flex h-16 items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg overflow-hidden bg-amber-700 flex items-center justify-center shrink-0">
-            <img
-              src="/logo.png"
-              alt="Terratrust"
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-            <span className="text-white font-bold text-sm absolute">T</span>
-          </div>
-          <span className="font-bold text-zinc-100 text-base tracking-tight hidden sm:block">
-            Terratrust
-          </span>
-        </Link>
-
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-0.5">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={clsx(
-                "px-3 py-1.5 rounded-md text-sm transition-colors",
-                path === l.href
-                  ? "bg-amber-900/50 text-amber-300 font-medium"
-                  : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800",
-              )}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Wallet + mobile toggle */}
-        <div className="flex items-center gap-2">
-          {isConnected && address ? (
-            <div className="relative">
-              <button
-                onClick={() => setWOpen(!wOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-700 bg-zinc-900 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                <span className="font-mono text-xs">{shortAddr(address)}</span>
-              </button>
-              {wOpen && (
-                <div className="absolute right-0 mt-2 w-52 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl py-1 z-50">
-                  <p className="px-3 py-2 text-xs text-zinc-500 border-b border-zinc-800 font-mono truncate">
-                    {address}
+    <html lang="en">
+      <body className={`${inter.className} bg-zinc-950 text-zinc-200 antialiased`}>
+        <StarknetProvider>
+          <Navbar />
+          <main>{children}</main>
+          <footer className="border-t border-zinc-800 mt-16">
+            <div className="max-w-6xl mx-auto px-4 py-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16 2L4 7V15C4 21.627 9.373 27.627 16 30C22.627 27.627 28 21.627 28 15V7L16 2Z" fill="url(#footerShieldGrad)" />
+                      <path d="M16 6L8 10V15C8 19.8 11.6 24.2 16 26C20.4 24.2 24 19.8 24 15V10L16 6Z" fill="#1c1917" fillOpacity="0.35" />
+                      <defs>
+                        <linearGradient id="footerShieldGrad" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+                          <stop stopColor="#f97316" />
+                          <stop offset="1" stopColor="#b45309" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <span className="font-bold text-zinc-100 text-lg">Terratrust</span>
+                  </div>
+                  <p className="text-sm text-zinc-500 leading-relaxed">
+                    Decentralized land verification on Starknet. Prevent fraud before you pay.
                   </p>
-                  <button
-                    onClick={() => {
-                      disconnect();
-                      setWOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2.5 text-sm text-red-400 hover:bg-zinc-800 transition-colors"
-                  >
-                    Disconnect
-                  </button>
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="relative">
-              <button
-                onClick={() => setWOpen(!wOpen)}
-                className="px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-semibold transition-colors"
-              >
-                Connect Wallet
-              </button>
-              {wOpen && (
-                <div className="absolute right-0 mt-2 w-52 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
-                  <p className="px-3 pb-2 text-xs text-zinc-500 border-b border-zinc-800 mb-1 font-medium uppercase tracking-wider">
-                    Select Wallet
-                  </p>
-                  {connectors.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => {
-                        connect({ connector: c });
-                        setWOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+
+                <div className="md:text-center">
+                  <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-3">Network</p>
+                  <p className="text-sm text-zinc-400">Starknet Sepolia</p>
+                  <p className="text-sm text-zinc-400 mt-1">Cairo Smart Contract</p>
+                  <p className="text-sm text-zinc-400 mt-1">IPFS Document Storage</p>
+                </div>
+
+                <div className="md:text-right">
+                  <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mb-3">Community</p>
+                  <div className="flex md:justify-end gap-4">
+                    
+                      href="https://x.com/TerraTrustHQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors"
                     >
-                      {c.name}
-                    </button>
-                  ))}
+                      X
+                    </a>
+                    
+                      href="https://discord.gg/gKbMKQtN"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors"
+                    >
+                      Discord
+                    </a>
+                    
+                      href="https://github.com/Terratrust"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors"
+                    >
+                      GitHub
+                    </a>
+                  </div>
                 </div>
-              )}
+              </div>
+
+              <div className="border-t border-zinc-800 mt-8 pt-6 text-center">
+                <p className="text-xs text-zinc-600">
+                  © {new Date().getFullYear()} Terratrust. Built on Starknet. All rights reserved.
+                </p>
+              </div>
             </div>
-          )}
-
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden p-2 text-zinc-400 hover:text-zinc-200"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {open ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {open && (
-        <div className="md:hidden border-t border-zinc-800 px-4 py-3 space-y-1 bg-zinc-950">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              onClick={() => setOpen(false)}
-              className={clsx(
-                "block px-3 py-2.5 rounded-md text-sm transition-colors",
-                path === l.href
-                  ? "bg-amber-900/50 text-amber-300 font-medium"
-                  : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800",
-              )}
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
-      )}
-    </nav>
+          </footer>
+        </StarknetProvider>
+      </body>
+    </html>
   );
 }
