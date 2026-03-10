@@ -1,24 +1,32 @@
+
 "use client";
 import React from "react";
 import { sepolia } from "@starknet-react/chains";
 import {
   StarknetConfig,
-  publicProvider,
   argent,
   braavos,
-  InjectedConnector,
+  useInjectedConnectors,
+  jsonRpcProvider,
 } from "@starknet-react/core";
 
+function rpc() {
+  return {
+    nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
+  };
+}
+
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
-  const connectors = [
-    new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
-    new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
-  ];
+  const { connectors } = useInjectedConnectors({
+    recommended: [argent(), braavos()],
+    includeRecommended: "onlyIfNoConnectors",
+    order: "random",
+  });
 
   return (
     <StarknetConfig
       chains={[sepolia]}
-      provider={publicProvider()}
+      provider={jsonRpcProvider({ rpc })}
       connectors={connectors}
     >
       {children}
