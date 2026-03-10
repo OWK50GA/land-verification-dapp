@@ -1,19 +1,23 @@
 "use client";
 import React from "react";
-import { mainnet, sepolia } from "@starknet-react/chains";
+import { sepolia } from "@starknet-react/chains";
 import {
   StarknetConfig,
   publicProvider,
   argent,
   braavos,
+  InjectedConnector,
 } from "@starknet-react/core";
 
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
-  const connectors = [argent(), braavos()];
+  const connectors = [
+    new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
+    new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
+  ];
 
   return (
     <StarknetConfig
-      chains={[sepolia, mainnet]}
+      chains={[sepolia]}
       provider={publicProvider()}
       connectors={connectors}
     >
